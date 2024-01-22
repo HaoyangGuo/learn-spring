@@ -1,18 +1,16 @@
 package com.dhguo.myfancypdfinvoices.web;
 
+import com.dhguo.myfancypdfinvoices.context.Application;
 import com.dhguo.myfancypdfinvoices.model.Invoice;
-import com.dhguo.myfancypdfinvoices.service.InvoiceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.List;
 
 public class MyFancyPdfInvoicesServlet extends HttpServlet {
-
-    private InvoiceService invoiceService = new InvoiceService();
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -27,8 +25,8 @@ public class MyFancyPdfInvoicesServlet extends HttpServlet {
                             "</html>");
         } else if (request.getRequestURI().equalsIgnoreCase("/invoices")) {
             response.setContentType("application/json; charset=UTF-8");
-            List<Invoice> invoices = invoiceService.findAll();
-            response.getWriter().print(objectMapper.writeValueAsString(invoices));
+            List<Invoice> invoices = Application.invoiceService.findAll();
+            response.getWriter().print(Application.objectMapper.writeValueAsString(invoices));
         }
     }
 
@@ -39,7 +37,7 @@ public class MyFancyPdfInvoicesServlet extends HttpServlet {
             String userId = request.getParameter("user_id");
             Integer amount = Integer.valueOf(request.getParameter("amount"));
 
-            Invoice invoice = invoiceService.create(userId, amount);
+            Invoice invoice = Application.invoiceService.create(userId, amount);
 
             response.setContentType("application/json; charset=UTF-8");
             String json = new ObjectMapper().writeValueAsString(invoice);
